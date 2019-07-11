@@ -1,0 +1,94 @@
+﻿<h2 style="font-family:Microsoft JhengHei;">新增圖書</h2>
+
+    <div class="form-horizontal">
+        <form id="addBookForm" data-role="validator" novalidate="novalidate">
+            <div class="form-group">
+                <label for="book_name" required validationMessage="請輸入書名">書本名稱</label>
+                <div>
+                    <input name="bookname" id="book_name" type="text" style="width: 300px"  required validationMessage="請輸入書名"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="book_author" required validationMessage="請輸入作者">作者</label>
+                <div>
+                    <input name="bookauthor" id="book_author" type="text" style="width: 300px"  required validationMessage="請輸入作者"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="book_publisher">出版商</label>
+                <div>
+                    <input name="bookpublisher" id="book_publisher" type="text" style="width: 300px" required validationMessage="請輸入出版商" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="book_note">內容簡介</label>
+                <div>
+                    <textarea  name="booknote" id="book_note" required validationMessage="請輸入正確日期格式"  width="300px" ></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="book_bought_date">購書日期</label>
+                <div>
+                    <input type="text" data-role='datepicker' id="bought_datepicker" name="bought_datepicker" data-type="date" style="width: 300px" required validationMessage="請輸入正確日期格式" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="book_category">圖書類別</label>
+                <div>
+                    <select name="bookcategory" id="book_category" style="width: 300px;" required validationMessage="請選擇類別"></select>
+                </div>
+            </div>
+
+            <div>
+                <input id="submit_data" type="button" value="新增書籍" style="background-color: #99b2db; color:#194284" />
+            </div>
+        </form>
+    </div>
+
+<div>
+    <input type="button" value="返回" onclick="location.href='/Book/Index'" style="background-color: #99b2db; color:#194284" />
+</div>
+
+<script>
+    $(document).ready(function () {
+    
+        //內容簡介字數控制
+        function WordsDeal() {
+            var curLength = $("#book_note").val().length;
+            if (curLength > 1000) {
+                var num = $("#book_note").val().substr(0, 1000);
+                $("#book_note").val(num);
+                alert("超過字數限制(1000字)，多出的字將被移除！");
+            }
+        }
+
+        ///新增書籍
+        $("#submit_data").click(function () {
+            var validator = $("#addBookForm").kendoValidator().data("kendoValidator");
+            if (validator.validate()) {
+                var Check = confirm('確定新增書籍資料??');
+                console.log(Check);
+                if (Check == true) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Book/InsertBook",
+                        data: {
+                            BookName: $("#book_name").val(),
+                            BookAuthor: $("#book_author").val(),
+                            BookPublisher: $("#book_publisher").val(),
+                            BookNote: $("#book_note").val(),
+                            BookBoughtDate: kendo.toString($("#bought_datepicker").data("kendoDatePicker").value(), "yyyy-MM-dd"),
+                            BookClassName: $("#book_category").data("kendoDropDownList").value()
+                        },
+                        dataType: "json", 
+                    });
+                };
+            };
+        });
+    });
+</script>
